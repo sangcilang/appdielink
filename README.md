@@ -142,6 +142,38 @@ flutter pub get
 flutter run
 ```
 
+## Deploy on Vercel (Backend + Frontend)
+
+This repository is a monorepo. Deploy **2 Vercel projects**:
+
+### 1) Backend (FastAPI)
+
+- **Root Directory**: `backend`
+- Entry: `backend/index.py` (served via `backend/vercel.json`)
+- Add **Vercel Postgres** to the project (so Vercel injects `POSTGRES_URL`).
+- (Optional) Add **Vercel Blob** to the project (for large files / share download streaming).
+
+**Backend environment variables (Vercel Project → Settings → Environment Variables):**
+- `VERCEL=1`
+- `SECRET_KEY=...` (random long string)
+- `ALGORITHM=HS256`
+- `CORS_ORIGINS=["https://<your-frontend-domain>"]`
+- `PUBLIC_BASE_URL=https://<your-backend-domain>` (so generated share links are public)
+- `BLOB_READ_WRITE_TOKEN=...` (only if using Vercel Blob)
+
+After deploy, test:
+- `https://<backend-domain>/health`
+- `https://<backend-domain>/docs`
+
+### 2) Frontend (React + Vite)
+
+- **Root Directory**: `frontend-web`
+- Add **Vercel Blob** to the project if you want uploads > ~4.5MB (client uploads directly to Blob).
+
+**Frontend environment variables:**
+- `VITE_API_URL=https://<backend-domain>/api/v1`
+- `BACKEND_API_URL=https://<backend-domain>/api/v1` (used by `frontend-web/api/blob/upload.js`)
+
 ## Desktop App (Windows - như phần mềm cài trên máy)
 
 Chạy như app desktop (không mở Chrome/Edge) bằng Electron + backend local.
