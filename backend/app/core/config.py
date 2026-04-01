@@ -92,14 +92,36 @@ class Settings(BaseSettings):
     @classmethod
     def default_database_url_from_vercel(cls, value: object) -> object:
         """If DATABASE_URL is not set, fall back to Vercel Postgres env vars."""
+        from os import environ
+
+        # Prefer Vercel Postgres in Vercel deployments, even if a local SQLite default exists.
+        is_vercel = environ.get("VERCEL") == "1"
+        if is_vercel:
+            for key in ("POSTGRES_URL", "POSTGRES_PRISMA_URL", "POSTGRES_URL_NON_POOLING"):
+                candidate = environ.get(key)
+                if candidate:
+                    return candidate
+
         if isinstance(value, str) and value.strip():
             return value
-        from os import environ
 
         for key in ("POSTGRES_URL", "POSTGRES_PRISMA_URL", "POSTGRES_URL_NON_POOLING"):
             candidate = environ.get(key)
             if candidate:
                 return candidate
+        return value
+
+    @field_validator("UPLOAD_DIR", mode="before")
+    @classmethod
+    def default_upload_dir_on_vercel(cls, value: object) -> object:
+        """Vercel filesystem is read-only except /tmp."""
+        from os import environ
+
+        if environ.get("VERCEL") == "1":
+            if value is None:
+                return "/tmp/uploads"
+            if isinstance(value, str) and value.strip() in ("./uploads", "uploads", "/uploads"):
+                return "/tmp/uploads"
         return value
 
     @field_validator("CORS_ORIGINS", "ALLOWED_FILE_TYPES", mode="before")

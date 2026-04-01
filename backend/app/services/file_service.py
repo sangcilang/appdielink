@@ -13,8 +13,12 @@ class FileService:
     
     def __init__(self):
         self.upload_dir = Path(settings.UPLOAD_DIR)
-        self.upload_dir.mkdir(parents=True, exist_ok=True)
         self.blob_access = getattr(settings, "BLOB_ACCESS", "private")
+
+        # Only create local upload folders when using filesystem storage.
+        # On Vercel, the filesystem is read-only except /tmp, and we prefer Blob storage anyway.
+        if not self._blob_enabled():
+            self.upload_dir.mkdir(parents=True, exist_ok=True)
 
     def _blob_enabled(self) -> bool:
         return bool(os.environ.get("BLOB_READ_WRITE_TOKEN"))
