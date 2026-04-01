@@ -117,3 +117,23 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+
+# Link1Die project
+**/.env
+**/.env.*
+**/.env.local
+
+**/node_modules/
+**/dist/
+**/dist*/
+**/web_dist/
+**/uploads/
+**/venv/
+
+**/.metadata
+**/build_log.txt
+
+*.spec
+*.db
+*.sqlite
+*.sqlite3
