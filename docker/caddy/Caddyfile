@@ -1,0 +1,24 @@
+{
+  email {$EMAIL}
+}
+
+www.{$DOMAIN} {
+  redir https://{$DOMAIN}{uri} permanent
+}
+
+{$DOMAIN} {
+  encode zstd gzip
+
+  @api path /api/*
+  handle @api {
+    reverse_proxy api:8000
+  }
+
+  handle /health {
+    reverse_proxy api:8000
+  }
+
+  root * /srv
+  try_files {path} /index.html
+  file_server
+}

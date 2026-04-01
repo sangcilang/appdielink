@@ -1,0 +1,49 @@
+{
+  "name": "link1die-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "dev": "electron .",
+    "dist": "electron-builder --win",
+    "dist2": "electron-builder --win --config.directories.output=dist2",
+    "dist3": "electron-builder --win --config.directories.output=dist3",
+    "dist4": "electron-builder --win --config.directories.output=dist4",
+    "dist5": "electron-builder --win --config.directories.output=dist5",
+    "dist6": "electron-builder --win --config.directories.output=dist6",
+    "dist7": "electron-builder --win --config.directories.output=dist7"
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.3"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.link1die.desktop",
+    "productName": "Link1Die",
+    "files": [
+      "main.js",
+      "preload.js",
+      "assets/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../backend/dist/Link1DieServer.exe",
+        "to": "Link1DieServer.exe"
+      },
+      {
+        "from": "../backend/web_dist",
+        "to": "web_dist"
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "artifactName": "Link1Die-Setup-${version}.exe"
+    }
+  }
+}
